@@ -1,2 +1,2 @@
-# microservices.getting.started
-Learn how to create Microservices the Synoa Style
+# services.getting.started 
+Learn how to create Services the Synoa Style
