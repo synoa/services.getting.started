@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+
+    activemq:
+        container_name: synoa_activemq
+        image: webcenter/activemq:5.14.3
+        volumes:
+            - ".data/activemq:/data/activemq"
+        ports:
+            - "8161:8161"
+            - "61616:61616"
+        environment:
+          ACTIVEMQ_MIN_MEMORY: 256
+          ACTIVEMQ_MAX_MEMORY: 1024
+          ACTIVEMQ_ENABLED_AUTH: "false"
+
+    mongodb:
+        container_name: synoa_mongodb
+        image: mongo:3.4
+        volumes:
+            - ".data/mongodb:/data/db"
+        ports:
+            - "27017:27017"
+        command: '--storageEngine wiredTiger'
