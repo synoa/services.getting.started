@@ -7,7 +7,10 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
+
 import static de.synoa.getting.started.helloworld.configurations.MongoDB.MONGODB_DB_INSERT;
+import static org.apache.camel.LoggingLevel.ERROR;
 import static org.apache.camel.LoggingLevel.INFO;
 
 @Component
@@ -27,8 +30,14 @@ public class ReadPersonCSVRouteBuilder extends RouteBuilder {
 
             .split().body()
                 .convertBodyTo(Document.class)
-                .setBody().method(ConvertBirthdayToDate.class)
-                .toF(MONGODB_DB_INSERT, "persons")
+                .setProperty("personalNumber").body(Document.class, p -> p.get("personalNumber"))
+                .doTry()
+                    .setBody().method(ConvertBirthdayToDate.class)
+                    .toF(MONGODB_DB_INSERT, "persons")
+                .endDoTry()
+                .doCatch(ParseException.class)
+                    .log(ERROR, "Failed to import Person with Id '${exchangeProperty.personalNumber}': ${exception.message}")
+                .end()
             .end()
             .log(INFO, "Finished reading file '${header.CamelFileName}'")
         ;
