@@ -14,13 +14,9 @@ public class ActiveMQ {
     @Autowired
     private PooledConnectionFactory connectionPool;
 
-    private static final String QUEUE_BASE = "activemq:{{activemq.queue.prefix}}.";
+    private static final String QUEUE_BASE = "activemq:de.synoa.getting.started.helloworld.";
 
-    private static final String TOPIC_BASE = "activemq:topic:{{activemq.queue.prefix}}.";
-
-    private static final String QUEUE_BASE_NO_TX = "activemqNoTx:{{activemq.queue.prefix}}.";
-
-    private static final String TOPIC_BASE_NO_TX = "activemqNoTx:topic:{{activemq.queue.prefix}}.";
+    private static final String QUEUE_BASE_NO_TX = "activemqNoTx:de.synoa.getting.started.helloworld.";
 
     public static final String QUEUE_PERSONS = QUEUE_BASE + "persons";
 
