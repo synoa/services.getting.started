@@ -17,8 +17,7 @@ public class MongoDB {
     private MongoClient mongoClient;
 
     private static final String MONGODB_BASE = "mongodb3:mongo?database={{spring.data.mongodb.database}}&operation=";
-    public static final String MONGODB_DB_STATS = MONGODB_BASE + MongoDbOperation.getDbStats;
-    public static final String MONGODB_DB_INSERT = MONGODB_BASE + MongoDbOperation.insert + "&collection=%s";
+    public static final String MONGODB_DB_UPDATE = MONGODB_BASE + MongoDbOperation.update + "&collection=%s";
 
     @Bean
     public Mongobee mongobee(@Value("${spring.data.mongodb.database}") String database) {
