@@ -2,9 +2,9 @@ package de.synoa.getting.started.person.out.file.routes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import de.synoa.getting.started.person.out.file.aggregate.PersonListAggregationStrategy;
 import de.synoa.getting.started.person.out.file.handlers.MapToPerson;
 import de.synoa.getting.started.person.out.file.model.Person;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.springframework.stereotype.Component;
@@ -37,16 +37,20 @@ public class JsonOutRouteBuilder extends RouteBuilder {
 
             .log(DEBUG, "Received Person '${body}' to export")
 
-            .setHeader(Exchange.FILE_NAME).simple("${body}.json")
+            .setProperty(PERSONAL_NUMBER).body()
 
             .setBody().body(String.class, no -> eq(PERSONAL_NUMBER, no))
             .toF(MONGODB_FIND_ONE_BY_QUERY, "persons")
 
             .setBody().method(MapToPerson.class)
-            .marshal(json)
 
-            .to("file:data/out")
-            .log(INFO, "Written file ${header.CamelFileName}")
+            .aggregate(constant(true), new PersonListAggregationStrategy()).completionSize(100).completionTimeout(2000)
+
+                .marshal(json)
+
+                .to("file:data/out?fileName=person-${date:now:yyyy-MM-dd'T'HH:mm:ss.SSSZ}.json")
+                .log(INFO, "Written file ${header.CamelFileName}")
+            .end()
         ;
 
         // @formatter:on
